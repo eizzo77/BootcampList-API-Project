@@ -12,6 +12,11 @@
   overflow: hidden;
 }
 
+.search-wrapper {
+  text-align: left;
+  padding: 2vh 0vh;
+}
+
 .table-header,
 .table-row {
   display: grid;

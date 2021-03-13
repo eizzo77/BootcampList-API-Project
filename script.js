@@ -1,5 +1,7 @@
 let studentsList = [];
 const tableContainer = document.querySelector(".table-container");
+const searchInput = document.querySelector("#search-input");
+const searchDropDown = document.querySelector("#search-dropdown");
 
 const fetchStudents = async () => {
   const response = await fetch("https://apple-seeds.herokuapp.com/api/users/");
@@ -24,6 +26,7 @@ function createRow(rowData, rowIndex) {
 }
 
 function createColumns(row, rowDataObj, rowIndex) {
+  row.setAttribute("data-num-of-row", rowDataObj.id);
   Object.keys(rowDataObj).forEach((property) => {
     const element = document.createElement("textarea");
     element.textContent = rowDataObj[property];
@@ -51,9 +54,9 @@ function createButton(parent, buttonText, rowIndex, callBack) {
   parent.appendChild(button);
 }
 
-function formTable() {
+function formTable(list) {
   removeRowsNodes();
-  studentsList.forEach((rowData, index) => createRow(rowData, index));
+  list.forEach((rowData, index) => rowData && createRow(rowData, index));
 }
 
 function cancelOrConfirm(index, e) {
@@ -70,11 +73,19 @@ function cancelOrConfirm(index, e) {
     .querySelectorAll(".button-flipper")
     .forEach((flipper) => flipper.classList.remove("flipped"));
 }
-
+// I had a great Dilemma how to implement the delete function. everything was fine with splice till we had to take into consideration the cases where
+// we remove a row after a search and we have to deal with the rows that comes after in the original studentList, because each one of them moves one index back
+// and once splicing again, we won't splice the currect row because everything is messed up from that point.
+// one option was to run over the next siblings (rows) that comes after the row which is being deleted and decrease their index by 1, which makes every
+// delete operation O(n).
+// I went with the other Option I could think of - instead of splicing, changing the value of the object which represents the row to null. so the remaining
+// rows still  have the same index and operation is still O(1). Not sure how good practice it is though.
 function deleteRow(index, e) {
-  studentsList.splice(index, 1);
-  e.target.parentNode.parentNode.classList.add("on-delete-animation");
-  setTimeout(() => (e.target.parentNode.parentNode.outerHTML = ""), 1000);
+  const currentRow = e.target.parentNode.parentNode;
+  //   console.log(currentRow.id);
+  studentsList[currentRow.getAttribute("data-num-of-row")] = null;
+  currentRow.classList.add("on-delete-animation");
+  setTimeout(() => (currentRow.outerHTML = ""), 1000);
 }
 
 function editRow(rowIndex, e) {
@@ -92,7 +103,7 @@ function editRow(rowIndex, e) {
 
 async function start() {
   studentsList = await fetchStudents();
-  formTable();
+  formTable(studentsList);
 }
 start();
 
@@ -100,3 +111,17 @@ start();
 function removeRowsNodes() {
   tableContainer.querySelectorAll(".table-row").forEach((row) => row.remove());
 }
+
+function searchByCategory() {
+  formTable(
+    studentsList.filter(
+      (s) =>
+        s &&
+        new RegExp("^" + searchInput.value, "gi").test(s[searchDropDown.value])
+    )
+  );
+}
+
+//
+searchInput.addEventListener("keyup", () => searchByCategory());
+searchDropDown.addEventListener("change", () => searchByCategory());
