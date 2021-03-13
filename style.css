@@ -1,0 +1,105 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.table-container {
+  position: relative;
+  text-align: center;
+  width: 80%;
+  margin: auto;
+  overflow: hidden;
+}
+
+.table-header,
+.table-row {
+  display: grid;
+  position: relative;
+  grid-template-columns: repeat(auto-fill, minmax(10%, 1fr));
+}
+
+.table-row {
+  transition: transform 1s;
+}
+
+.table-row:hover {
+  border: 2px blue solid;
+}
+
+:disabled {
+  color: black;
+}
+
+textarea {
+  background-color: ivory;
+  height: auto;
+  resize: none;
+}
+
+.delete {
+  background-color: darkgray;
+}
+
+.button-flipper {
+  transition: 0.3s;
+  transform-style: preserve-3d;
+}
+
+.flipped {
+  transform: rotateX(180deg);
+}
+
+.edit,
+.delete {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  backface-visibility: hidden;
+  z-index: 2;
+  transform: rotateX(0deg);
+}
+
+.cancel,
+.confirm {
+  height: 100%;
+  width: 100%;
+  background-color: #d31e3c;
+  backface-visibility: hidden;
+  transform: rotateX(-180deg);
+}
+
+.confirm {
+  background-color: #26c281;
+}
+
+.edit-mode {
+  opacity: 0.5;
+}
+
+.on-delete-animation {
+  position: absolute;
+  right: 0;
+  width: 100%;
+  z-index: 2;
+  animation-name: deleting;
+  animation-duration: 1s;
+  animation-timing-function: ease-out;
+}
+
+@keyframes deleting {
+  from {
+    transform: scale();
+    transform: rotateZ();
+    transform-origin: right;
+    opacity: 1;
+  }
+  99% {
+    transform: rotateZ(-120deg) scale(0.1, 0.3);
+    transform-origin: bottom;
+    opacity: 0;
+  }
+  100% {
+    display: none;
+  }
+}
