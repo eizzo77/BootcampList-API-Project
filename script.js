@@ -175,9 +175,7 @@ searchDropDown.addEventListener("change", () => searchByCategory());
 categoriesButtonsSort.forEach((button) =>
   button.addEventListener("click", () => {
     sortByCategory(
-      searchResultsArray.length > 0
-        ? searchResultsArray
-        : JSON.parse(localStorage.getItem("students")),
+      JSON.parse(localStorage.getItem("students")),
       button.getAttribute("data-name"),
       button.getAttribute("data-type") === "numeric"
         ? sortNumeric
