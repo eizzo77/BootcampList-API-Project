@@ -4,17 +4,23 @@ const searchDropDown = document.querySelector("#search-dropdown");
 const categoriesButtonsSort = document.querySelectorAll("button[data-name]");
 
 const fetchStudents = async () => {
-  const response = await fetch("https://apple-seeds.herokuapp.com/api/users/");
-  const studentsData = await response.json();
-  const allStudentsData = await Promise.all(
-    studentsData.map(async (student, index) => {
-      const response = await fetch(
-        `https://apple-seeds.herokuapp.com/api/users/${index}`
-      );
-      const extraStudentData = await response.json();
-      return { ...student, ...extraStudentData };
-    })
-  );
+  try {
+    const response = await fetch(
+      "https://apple-seeds.herokuapp.com/api/users/"
+    );
+    const studentsData = await response.json();
+    const allStudentsData = await Promise.all(
+      studentsData.map(async (student, index) => {
+        const response = await fetch(
+          `https://apple-seeds.herokuapp.com/api/users/${index}`
+        );
+        const extraStudentData = await response.json();
+        return { ...student, ...extraStudentData };
+      })
+    );
+  } catch {
+    console.error();
+  }
   return allStudentsData;
 };
 // row Creation

@@ -11,6 +11,88 @@ body {
   background-color: #1f2833;
 }
 
+.fethcing-block {
+  display: flex;
+  position: absolute;
+  left: -0.1vh;
+  z-index: 3;
+  width: 100%;
+  height: 100%;
+}
+
+.block {
+  background-color: #0b0f13;
+  border: #45a29e 2px solid;
+  width: 50%;
+  height: 100%;
+  animation-duration: 3s;
+  animation-timing-function: linear;
+  animation-iteration-count: 1;
+}
+
+.center {
+  position: absolute;
+  background: #0b0c10;
+  top: 35%;
+  left: 35%;
+  width: 30%;
+  height: 30%;
+  border: 3px solid #45a29e;
+}
+
+.loading {
+  position: absolute;
+  font-size: 3em;
+  text-align: center;
+  top: 20%;
+  left: 15%;
+  color: ivory;
+  z-index: 5;
+  animation-name: loading;
+  animation-duration: 0.7s;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-out;
+}
+@keyframes loading {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.1;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.left {
+  animation-name: left;
+}
+
+.right {
+  animation-name: right;
+}
+
+@keyframes left {
+  from {
+    transform: translateX();
+    transform-origin: right;
+  }
+  to {
+    transform: translateX(-120vh);
+  }
+}
+
+@keyframes right {
+  from {
+    transform: translateX();
+    transform-origin: left;
+  }
+  to {
+    transform: translateX(120vh);
+  }
+}
+
 .table-container {
   position: relative;
   text-align: center;
@@ -80,17 +162,23 @@ textarea {
   transform: rotateX(0deg);
 }
 
+.delete {
+  color: #d31e3c;
+}
+
 .cancel,
 .confirm {
   height: 100%;
   width: 100%;
-  background-color: #d31e3c;
+  background-color: ivory;
+  color: #0b0c10;
   backface-visibility: hidden;
   transform: rotateX(-180deg);
 }
 
 .confirm {
-  background-color: #26c281;
+  color: ivory;
+  background-color: #1f2833;
 }
 
 .edit-mode {
