@@ -111,7 +111,7 @@ function updateData(row) {
   localStorage.setItem("students", JSON.stringify(studentsList));
 }
 
-// I had a great Dilemma how to implement the delete function. everything was fine with splice till we had to take into consideration the cases where
+// I had a big Dilemma how to implement the delete function. everything was fine with splice till we had to take into consideration the cases where
 // we remove a row after a search and we have to deal with the rows that comes after in the original studentList, because each one of them moves one index back
 // and once splicing again, we won't splice the currect row because everything is messed up from that point.
 // one option was to run over the next siblings (rows) that comes after the row which is being deleted and decrease their index by 1, which makes every
@@ -165,7 +165,7 @@ function sortByCategory(list, category, callBack, mode) {
       )
   );
 }
-
+// sorting callbacks
 sortNumeric = (a, b) => a - b;
 sortAlphabet = (a, b) => a.localeCompare(b);
 // event handlers
@@ -194,6 +194,8 @@ categoriesButtonsSort.forEach((button) =>
   })
 );
 // ~~~~~~~~~~~START POINT~~~~~~~~~`
+// if its the first time visiting the website - we fetching the data.
+// for further times we skip the fetch. (assuming the api is not regulary updated).
 async function start() {
   localStorage.getItem("students") ||
     localStorage.setItem("students", JSON.stringify(await fetchStudents()));
