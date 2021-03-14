@@ -17,14 +17,14 @@ const fetchStudents = async () => {
   );
   return allStudentsData;
 };
-
+// row Creation
 function createRow(rowData, rowIndex) {
   const row = document.createElement("div");
   row.className = "table-row";
   createColumns(row, rowData, rowIndex);
   tableContainer.appendChild(row);
 }
-
+// create the columns.
 function createColumns(row, rowDataObj, rowIndex) {
   row.setAttribute("data-num-of-row", rowDataObj.id);
   Object.keys(rowDataObj).forEach((property) => {
@@ -39,18 +39,13 @@ function createColumns(row, rowDataObj, rowIndex) {
     editRow,
     cancelOrConfirm,
   ]);
-  //   const buttonFlipperElement = document.createElement("div");
-  //   buttonFlipperElement.className = "button-flipper";
-  //   createButton(buttonFlipperElement, "Edit", rowIndex, editRow);
-  //   createButton(buttonFlipperElement, "Cancel", rowIndex, cancelOrConfirm);
-  //   row.appendChild(buttonFlipperElement);
-  const buttonFlipperElement2 = document.createElement("div");
-  buttonFlipperElement2.className = "button-flipper";
-  createButton(buttonFlipperElement2, "Delete", rowIndex, deleteRow);
-  createButton(buttonFlipperElement2, "Confirm", rowIndex, cancelOrConfirm);
-  row.appendChild(buttonFlipperElement2);
+  createButtonFlipper(row, ["Delete", "Confirm"], rowIndex, [
+    deleteRow,
+    cancelOrConfirm,
+  ]);
 }
 
+// button flipper div creation
 function createButtonFlipper(row, names, rowIndex, callbacks) {
   const buttonFlipperElement = document.createElement("div");
   buttonFlipperElement.className = "button-flipper";
@@ -120,9 +115,10 @@ function deleteRow(index, e) {
 // editing row Mode , when cancel and confirm buttons appear
 function editRow(rowIndex, e) {
   setTimeout(() => {
-    e.target.parentNode.classList.add("flipped");
-    e.target.parentNode.nextSibling.classList.add("flipped");
-    e.target.parentNode.parentNode
+    const flipper = e.target.parentNode;
+    flipper.classList.add("flipped");
+    flipper.nextSibling.classList.add("flipped");
+    flipper.parentNode
       .querySelectorAll("[data-editable")
       .forEach(
         (element) =>

@@ -1,7 +1,14 @@
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans&display=swap");
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: "Open Sans", sans-serif;
+}
+
+body {
+  background-color: #1f2833;
 }
 
 .table-container {
@@ -10,6 +17,7 @@
   width: 80%;
   margin: auto;
   overflow: hidden;
+  border: #66fcf1 solid 2px;
 }
 
 .search-wrapper {
@@ -23,8 +31,9 @@
   position: relative;
   grid-template-columns: repeat(auto-fill, minmax(10%, 1fr));
 }
-
 .table-header > button {
+  color: ivory;
+  background: #0b0c10;
 }
 
 .table-row {
@@ -32,7 +41,7 @@
 }
 
 .table-row:hover {
-  border: 2px blue solid;
+  border: 2px #66fcf1 solid;
 }
 
 :disabled {
@@ -40,7 +49,8 @@
 }
 
 textarea {
-  background-color: ivory;
+  font-family: "Open Sans", sans-serif;
+  background-color: #45a29e;
   height: auto;
   resize: none;
 }
@@ -60,6 +70,8 @@ textarea {
 
 .edit,
 .delete {
+  color: ivory;
+  background: #0b0c10;
   position: absolute;
   height: 100%;
   width: 100%;
