@@ -1,4 +1,3 @@
-// let studentsList = [];
 const tableContainer = document.querySelector(".table-container");
 const searchInput = document.querySelector("#search-input");
 const searchDropDown = document.querySelector("#search-dropdown");
@@ -140,11 +139,18 @@ function searchByCategory() {
   );
 }
 
-// function sortByCategory(category) {
-//     formTable(JSON.parse(localStorage.getITem("students")).sort((a,b) => ))
-// }
+function sortByCategory(category) {
+  formTable(
+    JSON.parse(localStorage.getItem("students"))
+      .filter((s) => s)
+      .sort((a, b) => a[category] - b[category])
+  );
+}
 
-//
 searchInput.addEventListener("keyup", () => searchByCategory());
 searchDropDown.addEventListener("change", () => searchByCategory());
-categoriesButtonsSort.addEventListener("click", () => sortByCategory());
+categoriesButtonsSort.forEach((button) =>
+  button.addEventListener("click", (e) =>
+    sortByCategory(e.target.getAttribute("data-name"))
+  )
+);
