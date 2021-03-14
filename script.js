@@ -1,26 +1,34 @@
+// elements
 const tableContainer = document.querySelector(".table-container");
 const searchInput = document.querySelector("#search-input");
 const searchDropDown = document.querySelector("#search-dropdown");
 const categoriesButtonsSort = document.querySelectorAll("button[data-name]");
-
+// pre-load elements
+const fetchingBlock = document.querySelector(".fethcing-block");
+const blocks = document.querySelectorAll(".block");
+const centerLoadSqrt = document.querySelector(".center");
+// array which stores the rows shown after a search
+let searchResultsArray = [];
+// fethcing students for the first time.
 const fetchStudents = async () => {
-  try {
-    const response = await fetch(
-      "https://apple-seeds.herokuapp.com/api/users/"
-    );
-    const studentsData = await response.json();
-    const allStudentsData = await Promise.all(
-      studentsData.map(async (student, index) => {
-        const response = await fetch(
-          `https://apple-seeds.herokuapp.com/api/users/${index}`
-        );
-        const extraStudentData = await response.json();
-        return { ...student, ...extraStudentData };
-      })
-    );
-  } catch {
-    console.error();
-  }
+  fetchingBlock.style.display = "flex";
+  const response = await fetch("https://apple-seeds.herokuapp.com/api/users/");
+  const studentsData = await response.json();
+  const allStudentsData = await Promise.all(
+    studentsData.map(async (student, index) => {
+      const response = await fetch(
+        `https://apple-seeds.herokuapp.com/api/users/${index}`
+      );
+      const extraStudentData = await response.json();
+      return { ...student, ...extraStudentData };
+    })
+  );
+  setTimeout(() => {
+    fetchingBlock.style.display = "none";
+  }, 3000);
+  blocks[0].classList.add("left");
+  blocks[1].classList.add("right");
+  centerLoadSqrt.classList.add("fade");
   return allStudentsData;
 };
 // row Creation
@@ -138,18 +146,17 @@ function removeRowsNodes() {
 }
 // search func
 function searchByCategory() {
-  formTable(
-    JSON.parse(localStorage.getItem("students")).filter(
-      (s) =>
-        s &&
-        new RegExp("^" + searchInput.value, "gi").test(s[searchDropDown.value])
-    )
+  searchResultsArray = JSON.parse(localStorage.getItem("students")).filter(
+    (s) =>
+      s &&
+      new RegExp("^" + searchInput.value, "gi").test(s[searchDropDown.value])
   );
+  formTable(searchResultsArray);
 }
 // sorting funcs
-function sortByCategory(category, callBack, mode) {
+function sortByCategory(list, category, callBack, mode) {
   formTable(
-    JSON.parse(localStorage.getItem("students"))
+    list
       .filter((s) => s)
       .sort((a, b) =>
         mode === "asc"
@@ -164,9 +171,13 @@ sortAlphabet = (a, b) => a.localeCompare(b);
 // event handlers
 searchInput.addEventListener("keyup", () => searchByCategory());
 searchDropDown.addEventListener("change", () => searchByCategory());
+// sorting buttons event handlers
 categoriesButtonsSort.forEach((button) =>
   button.addEventListener("click", () => {
     sortByCategory(
+      searchResultsArray.length > 0
+        ? searchResultsArray
+        : JSON.parse(localStorage.getItem("students")),
       button.getAttribute("data-name"),
       button.getAttribute("data-type") === "numeric"
         ? sortNumeric

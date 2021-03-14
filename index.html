@@ -9,16 +9,17 @@
 </head>
 <body>
     <div class="fethcing-block">
-        <div class="block left"></div>
-        <div class="block right"></div>
+        <div class="block"></div>
+        <div class="block"></div>
         <div class="center">
             <div class="loading">Loading Data...</div> 
         </div>
     </div>
     <div class="table-container">
         <div class="search-wrapper">
-            <input id="search-input" placeholder="Search by Category"></input>
-            <select id="search-dropdown">
+            <div class="search-container">
+              <input id="search-input" placeholder="Search by Category"></input>
+              <select id="search-dropdown">
                 <option value="firstName">First Name</option>
                 <option value="lastName">Last Name</option>
                 <option value="capsule">Capsule</option>
@@ -26,7 +27,9 @@
                 <option value="city">City</option>
                 <option value="gender">Gender</option>
                 <option value="hobby">Hobby</option>
-            </select>
+               </select>
+            </div>
+            <div class="apple-seed-img"></div>
         </div>
         <div class="table-header">
             <button data-name="id" data-type="numeric"><i class="fas fa-sort-numeric-down"></i> #</button>
