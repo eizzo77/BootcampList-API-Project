@@ -24,6 +24,9 @@
   grid-template-columns: repeat(auto-fill, minmax(10%, 1fr));
 }
 
+.table-header > button > i {
+}
+
 .table-row {
   transition: transform 1s;
 }

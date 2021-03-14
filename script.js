@@ -1,7 +1,8 @@
-let studentsList = [];
+// let studentsList = [];
 const tableContainer = document.querySelector(".table-container");
 const searchInput = document.querySelector("#search-input");
 const searchDropDown = document.querySelector("#search-dropdown");
+const categoriesButtonsSort = document.querySelectorAll("button[data-name]");
 
 const fetchStudents = async () => {
   const response = await fetch("https://apple-seeds.herokuapp.com/api/users/");
@@ -29,6 +30,7 @@ function createColumns(row, rowDataObj, rowIndex) {
   row.setAttribute("data-num-of-row", rowDataObj.id);
   Object.keys(rowDataObj).forEach((property) => {
     const element = document.createElement("textarea");
+    element.setAttribute("data-name", property);
     element.textContent = rowDataObj[property];
     property.toString() !== "id" && element.setAttribute("data-editable", "");
     element.disabled = true;
@@ -60,19 +62,33 @@ function formTable(list) {
 }
 
 function cancelOrConfirm(index, e) {
-  e.target.parentNode.parentNode
-    .querySelectorAll("[data-editable")
-    .forEach((element) => {
-      (element.disabled = true) && element.classList.remove("edit-mode");
-      element.value =
-        e.target.textContent === "Cancel"
-          ? element.textContent
-          : (element.textContent = element.value);
-    });
-  e.target.parentNode.parentNode
+  const currentRow = e.target.parentNode.parentNode;
+  currentRow.querySelectorAll("[data-editable").forEach((element) => {
+    (element.disabled = true) && element.classList.remove("edit-mode");
+    element.value =
+      e.target.textContent === "Cancel"
+        ? element.textContent
+        : (element.textContent = element.value);
+  });
+  e.target.textContent === "Confirm" && updateData(currentRow); // to continue
+  currentRow
     .querySelectorAll(".button-flipper")
     .forEach((flipper) => flipper.classList.remove("flipped"));
 }
+
+function updateData(row) {
+  const studentsList = JSON.parse(localStorage.getItem("students"));
+  row
+    .querySelectorAll("[data-editable]")
+    .forEach(
+      (element) =>
+        (studentsList[row.getAttribute("data-num-of-row")][
+          element.getAttribute("data-name")
+        ] = element.value)
+    );
+  localStorage.setItem("students", JSON.stringify(studentsList));
+}
+
 // I had a great Dilemma how to implement the delete function. everything was fine with splice till we had to take into consideration the cases where
 // we remove a row after a search and we have to deal with the rows that comes after in the original studentList, because each one of them moves one index back
 // and once splicing again, we won't splice the currect row because everything is messed up from that point.
@@ -82,8 +98,9 @@ function cancelOrConfirm(index, e) {
 // rows still  have the same index and operation is still O(1). Not sure how good practice it is though.
 function deleteRow(index, e) {
   const currentRow = e.target.parentNode.parentNode;
-  //   console.log(currentRow.id);
+  const studentsList = JSON.parse(localStorage.getItem("students"));
   studentsList[currentRow.getAttribute("data-num-of-row")] = null;
+  localStorage.setItem("students", JSON.stringify(studentsList));
   currentRow.classList.add("on-delete-animation");
   setTimeout(() => (currentRow.outerHTML = ""), 1000);
 }
@@ -102,8 +119,9 @@ function editRow(rowIndex, e) {
 }
 
 async function start() {
-  studentsList = await fetchStudents();
-  formTable(studentsList);
+  localStorage.getItem("students") ||
+    localStorage.setItem("students", JSON.stringify(await fetchStudents()));
+  formTable(JSON.parse(localStorage.getItem("students")));
 }
 start();
 
@@ -114,7 +132,7 @@ function removeRowsNodes() {
 
 function searchByCategory() {
   formTable(
-    studentsList.filter(
+    JSON.parse(localStorage.getItem("students")).filter(
       (s) =>
         s &&
         new RegExp("^" + searchInput.value, "gi").test(s[searchDropDown.value])
@@ -122,6 +140,11 @@ function searchByCategory() {
   );
 }
 
+// function sortByCategory(category) {
+//     formTable(JSON.parse(localStorage.getITem("students")).sort((a,b) => ))
+// }
+
 //
 searchInput.addEventListener("keyup", () => searchByCategory());
 searchDropDown.addEventListener("change", () => searchByCategory());
+categoriesButtonsSort.addEventListener("click", () => sortByCategory());
