@@ -35,11 +35,15 @@ function createColumns(row, rowDataObj, rowIndex) {
     element.disabled = true;
     row.appendChild(element);
   });
-  const buttonFlipperElement = document.createElement("div");
-  buttonFlipperElement.className = "button-flipper";
-  createButton(buttonFlipperElement, "Edit", rowIndex, editRow);
-  createButton(buttonFlipperElement, "Cancel", rowIndex, cancelOrConfirm);
-  row.appendChild(buttonFlipperElement);
+  createButtonFlipper(row, ["Edit", "Cancel"], rowIndex, [
+    editRow,
+    cancelOrConfirm,
+  ]);
+  //   const buttonFlipperElement = document.createElement("div");
+  //   buttonFlipperElement.className = "button-flipper";
+  //   createButton(buttonFlipperElement, "Edit", rowIndex, editRow);
+  //   createButton(buttonFlipperElement, "Cancel", rowIndex, cancelOrConfirm);
+  //   row.appendChild(buttonFlipperElement);
   const buttonFlipperElement2 = document.createElement("div");
   buttonFlipperElement2.className = "button-flipper";
   createButton(buttonFlipperElement2, "Delete", rowIndex, deleteRow);
@@ -47,6 +51,16 @@ function createColumns(row, rowDataObj, rowIndex) {
   row.appendChild(buttonFlipperElement2);
 }
 
+function createButtonFlipper(row, names, rowIndex, callbacks) {
+  const buttonFlipperElement = document.createElement("div");
+  buttonFlipperElement.className = "button-flipper";
+  names.forEach((buttonName, index) => {
+    createButton(buttonFlipperElement, buttonName, rowIndex, callbacks[index]);
+  });
+  row.appendChild(buttonFlipperElement);
+}
+
+// creating the buttons for a row
 function createButton(parent, buttonText, rowIndex, callBack) {
   const button = document.createElement("button");
   button.textContent = buttonText;
@@ -54,12 +68,12 @@ function createButton(parent, buttonText, rowIndex, callBack) {
   button.addEventListener("click", (e) => callBack(rowIndex, e));
   parent.appendChild(button);
 }
-
+// forming the table.
 function formTable(list) {
   removeRowsNodes();
   list.forEach((rowData, index) => rowData && createRow(rowData, index));
 }
-
+// handling the cancel or confirm button clicks which have a lot of same logic so one func for both.
 function cancelOrConfirm(index, e) {
   const currentRow = e.target.parentNode.parentNode;
   currentRow.querySelectorAll("[data-editable").forEach((element) => {
@@ -74,7 +88,7 @@ function cancelOrConfirm(index, e) {
     .querySelectorAll(".button-flipper")
     .forEach((flipper) => flipper.classList.remove("flipped"));
 }
-
+// updating the current row with the new data
 function updateData(row) {
   const studentsList = JSON.parse(localStorage.getItem("students"));
   row
@@ -103,7 +117,7 @@ function deleteRow(index, e) {
   currentRow.classList.add("on-delete-animation");
   setTimeout(() => (currentRow.outerHTML = ""), 1000);
 }
-
+// editing row Mode , when cancel and confirm buttons appear
 function editRow(rowIndex, e) {
   setTimeout(() => {
     e.target.parentNode.classList.add("flipped");
@@ -116,19 +130,11 @@ function editRow(rowIndex, e) {
       );
   }, 300);
 }
-
-async function start() {
-  localStorage.getItem("students") ||
-    localStorage.setItem("students", JSON.stringify(await fetchStudents()));
-  formTable(JSON.parse(localStorage.getItem("students")));
-}
-start();
-
-//
+//clearing table
 function removeRowsNodes() {
   tableContainer.querySelectorAll(".table-row").forEach((row) => row.remove());
 }
-
+// search func
 function searchByCategory() {
   formTable(
     JSON.parse(localStorage.getItem("students")).filter(
@@ -138,19 +144,46 @@ function searchByCategory() {
     )
   );
 }
-
-function sortByCategory(category) {
+// sorting funcs
+function sortByCategory(category, callBack, mode) {
   formTable(
     JSON.parse(localStorage.getItem("students"))
       .filter((s) => s)
-      .sort((a, b) => a[category] - b[category])
+      .sort((a, b) =>
+        mode === "asc"
+          ? callBack(a[category], b[category])
+          : callBack(b[category], a[category])
+      )
   );
 }
 
+sortNumeric = (a, b) => a - b;
+sortAlphabet = (a, b) => a.localeCompare(b);
+// event handlers
 searchInput.addEventListener("keyup", () => searchByCategory());
 searchDropDown.addEventListener("change", () => searchByCategory());
 categoriesButtonsSort.forEach((button) =>
-  button.addEventListener("click", (e) =>
-    sortByCategory(e.target.getAttribute("data-name"))
-  )
+  button.addEventListener("click", () => {
+    sortByCategory(
+      button.getAttribute("data-name"),
+      button.getAttribute("data-type") === "numeric"
+        ? sortNumeric
+        : sortAlphabet,
+      button.getAttribute("data-state") === "dsc"
+        ? button.setAttribute("data-state", "asc") || "asc"
+        : button.setAttribute("data-state", "dsc") || "dsc"
+    );
+    const logo = button.querySelector("i");
+    logo.className =
+      button.getAttribute("data-state") === "dsc"
+        ? logo.className.replace("down", "up")
+        : logo.className.replace("up", "down");
+  })
 );
+// ~~~~~~~~~~~START POINT~~~~~~~~~`
+async function start() {
+  localStorage.getItem("students") ||
+    localStorage.setItem("students", JSON.stringify(await fetchStudents()));
+  formTable(JSON.parse(localStorage.getItem("students")));
+}
+start();
